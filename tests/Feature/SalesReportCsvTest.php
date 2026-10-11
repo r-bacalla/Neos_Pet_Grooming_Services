@@ -62,7 +62,7 @@ it('shows POS product totals in the sales report', function () {
         ->assertSee('Pet Shampoo')
         ->assertSee('Product units sold');
 
-    expect($response->viewData('sales')->perPage())->toBe(15);
+    expect($response->viewData('sales')->perPage())->toBe(10);
 });
 
 it('saves and downloads sales reports as PDFs for the selected date range', function () {

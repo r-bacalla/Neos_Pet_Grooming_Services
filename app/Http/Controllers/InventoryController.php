@@ -13,12 +13,17 @@ use Illuminate\Support\Str;
 
 class InventoryController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
+        $search = trim($request->get('search', ''));
+        $category = $request->filled('category')
+            ? (string) $request->query('category')
+            : '';
+
         $stockProducts = Product::query()
             ->where('active', true)
             ->orderBy('name')
-            ->get();
+            ->get(['id', 'name', 'sku', 'stock']);
 
         $products = Product::query()
             ->with([
@@ -29,8 +34,17 @@ class InventoryController extends Controller
                         ->limit(1);
                 },
             ])
+            ->when($category !== '', fn ($query) => $query->where('category', $category))
+            ->when($search !== '', function ($query) use ($search) {
+                $query->where(function ($query) use ($search) {
+                    $query->where('name', 'like', "%{$search}%")
+                        ->orWhere('sku', 'like', "%{$search}%")
+                        ->orWhere('category', 'like', "%{$search}%");
+                });
+            })
             ->orderBy('name')
-            ->paginate(15);
+            ->paginate(10)
+            ->withQueryString();
         $categories = Category::query()->orderBy('name')->pluck('name');
 
         return view(
@@ -363,7 +377,7 @@ class InventoryController extends Controller
         $movements = $product->stockMovements()
             ->with(['user', 'batch'])
             ->latest()
-            ->paginate(15);
+            ->paginate(10);
 
         return view('inventory.history', compact('product', 'movements'));
     }

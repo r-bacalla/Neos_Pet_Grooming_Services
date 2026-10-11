@@ -49,7 +49,7 @@ class GroomingController extends Controller
             ->when($statusFilter === 'completed', fn ($query) => $query->whereIn('status', ['ready', 'completed'])->whereNotNull('sale_id'))
             ->when($statusFilter === 'unpaid', fn ($query) => $query->whereIn('status', ['ready', 'completed'])->whereNull('sale_id'))
             ->latest()
-            ->paginate(15)
+            ->paginate(10)
             ->withQueryString();
 
         $groomingAddons = GroomingAddon::where('active', true)

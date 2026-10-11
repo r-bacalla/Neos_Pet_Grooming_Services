@@ -379,6 +379,37 @@
                         <span class="inline-flex items-center gap-1.5"><span class="h-2 w-2 rounded-full bg-red-500"></span>Out of Stock</span>
                     </div>
                 </div>
+
+                <form method="GET" action="{{ route('inventory.index') }}" class="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center">
+                    <div class="relative min-w-0 flex-1">
+                        <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
+                            <svg aria-hidden="true" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="11" cy="11" r="8" />
+                                <path stroke-linecap="round" d="m21 21-4.3-4.3" />
+                            </svg>
+                        </div>
+                        <input type="search" name="search" value="{{ request('search') }}" placeholder="Search product, SKU, or category..." class="w-full rounded-lg border border-slate-300 bg-white py-2.5 pl-10 pr-3 text-sm text-slate-900 placeholder:text-slate-400 focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/20">
+                    </div>
+
+                    <select name="category" aria-label="Filter inventory by category" onchange="this.form.submit()" class="rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-700 focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/20">
+                        <option value="">All categories</option>
+                        @foreach($categories as $category)
+                            <option value="{{ $category }}" @selected(request('category') === $category)>{{ $category }}</option>
+                        @endforeach
+                    </select>
+
+                    <button type="submit" class="inline-flex min-h-10 items-center justify-center gap-2 rounded-lg bg-white px-4 py-2 text-sm font-semibold text-emerald-950 transition hover:bg-emerald-50">
+                        <svg aria-hidden="true" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="11" cy="11" r="8" />
+                            <path stroke-linecap="round" d="m21 21-4.3-4.3" />
+                        </svg>
+                        Search
+                    </button>
+
+                    @if(request('search') || request('category'))
+                        <a href="{{ route('inventory.index') }}" class="inline-flex min-h-10 items-center justify-center rounded-lg border border-white/40 px-4 py-2 text-sm font-semibold text-white transition hover:bg-white/10">Clear</a>
+                    @endif
+                </form>
             </div>
 
             {{-- Desktop Table --}}

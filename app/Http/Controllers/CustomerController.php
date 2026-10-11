@@ -40,7 +40,7 @@ class CustomerController extends Controller
                 });
             })
             ->orderBy('name')
-            ->paginate(15)
+            ->paginate(10)
             ->withQueryString();
 
         return view(

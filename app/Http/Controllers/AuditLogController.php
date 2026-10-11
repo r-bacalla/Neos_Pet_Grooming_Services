@@ -36,7 +36,7 @@ class AuditLogController extends Controller
             ->when($filters['from'] ?? null, fn ($query, $from) => $query->whereDate('created_at', '>=', $from))
             ->when($filters['to'] ?? null, fn ($query, $to) => $query->whereDate('created_at', '<=', $to))
             ->latest()
-            ->paginate(30)
+            ->paginate(10)
             ->withQueryString();
 
         $actions = AuditLog::query()

@@ -4,7 +4,7 @@ use App\Models\Sale;
 use App\Models\SaleItem;
 use App\Models\User;
 
-it('paginates grooming rows by 15 while keeping chart aggregates complete', function () {
+it('paginates grooming rows by 10 while keeping chart aggregates complete', function () {
     $manager = User::factory()->create(['role' => 'manager']);
     $saleDate = now();
     $sale = Sale::create([
@@ -45,11 +45,11 @@ it('paginates grooming rows by 15 while keeping chart aggregates complete', func
         ->assertSee('page=2', false);
 
     expect($firstPage->viewData('paginatedItems')->total())->toBe(31)
-        ->and($firstPage->viewData('paginatedItems')->count())->toBe(15)
+        ->and($firstPage->viewData('paginatedItems')->count())->toBe(10)
         ->and($firstPage->viewData('items')->count())->toBe(31);
 
     $secondPage = $this->get(route('reports.grooming', $dates + ['page' => 2]))->assertOk();
     expect($secondPage->viewData('paginatedItems')->currentPage())->toBe(2)
-        ->and($secondPage->viewData('paginatedItems')->count())->toBe(15)
+        ->and($secondPage->viewData('paginatedItems')->count())->toBe(10)
         ->and($secondPage->viewData('items')->count())->toBe(31);
 });

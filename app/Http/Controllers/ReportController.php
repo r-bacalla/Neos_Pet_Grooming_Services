@@ -17,7 +17,7 @@ class ReportController extends Controller
 {
     public function index()
     {
-        $generatedReports = GeneratedReport::latest()->paginate(15);
+        $generatedReports = GeneratedReport::latest()->paginate(10);
 
         return view('reports.index', compact('generatedReports'));
     }
@@ -276,7 +276,7 @@ class ReportController extends Controller
                 'completed'
             )
             ->latest()
-            ->paginate(15)
+            ->paginate(10)
             ->withQueryString();
 
         $summary = Sale::query()
@@ -418,7 +418,7 @@ class ReportController extends Controller
             ->orderByDesc('quantity');
 
         $items = (clone $itemsQuery)->get();
-        $paginatedItems = (clone $itemsQuery)->paginate(15)->withQueryString();
+        $paginatedItems = (clone $itemsQuery)->paginate(10)->withQueryString();
 
         $importedProducts = StockMovement::query()
             ->where('type', 'stock_in')
@@ -591,7 +591,7 @@ class ReportController extends Controller
             ->orderByDesc('quantity');
 
         $items = (clone $itemsQuery)->get();
-        $paginatedItems = (clone $itemsQuery)->paginate(15)->withQueryString();
+        $paginatedItems = (clone $itemsQuery)->paginate(10)->withQueryString();
 
         return view(
             'reports.grooming',
@@ -612,7 +612,7 @@ class ReportController extends Controller
             'sale',
         ])
             ->latest()
-            ->paginate(15);
+            ->paginate(10);
 
         $movementSummary = StockMovement::query()
             ->select('type')

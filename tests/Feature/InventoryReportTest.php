@@ -38,7 +38,7 @@ it('shows a View reason button and keeps the reason in a hidden dialog until ope
         ->assertSee('x-text="selectedReason"', false);
 });
 
-it('shows 15 stock movements per page with numbered next-page navigation', function () {
+it('shows 10 stock movements per page with numbered next-page navigation', function () {
     $manager = User::factory()->create(['role' => 'manager']);
     $product = Product::create([
         'name' => 'Pagination Test Shampoo',
@@ -72,13 +72,14 @@ it('shows 15 stock movements per page with numbered next-page navigation', funct
         ->assertSee('Pagination movement 16')
         ->assertDontSee('Pagination movement 01')
         ->assertSee('page=2', false)
-        ->assertSee('Showing 15 movements');
+        ->assertSee('Showing 10 movements');
 
     $this->get(route('reports.inventory', ['page' => 2]))
         ->assertOk()
+        ->assertSee('Pagination movement 06')
         ->assertSee('Pagination movement 01')
-        ->assertDontSee('Pagination movement 02')
-        ->assertSee('Showing 1 movements');
+        ->assertDontSee('Pagination movement 07')
+        ->assertSee('Showing 6 movements');
 });
 
 it('labels movement archiving as Delete while retaining the history record', function () {

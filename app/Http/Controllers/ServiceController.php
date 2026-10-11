@@ -26,7 +26,7 @@ class ServiceController extends Controller
                     ->orWhereJsonLength('available_add_on_ids', 0);
             }))
             ->orderBy('name')
-            ->paginate(15)
+            ->paginate(10)
             ->withQueryString();
         $serviceNames = Service::query()->select('name')->distinct()->orderBy('name')->pluck('name');
         $groomingAddons = GroomingAddon::orderBy('name')->get();

@@ -44,26 +44,30 @@ class ProductController extends Controller
                 });
             })
             ->orderBy('name')
-            ->paginate(15)
+            ->paginate(10)
             ->withQueryString();
         $categories = Category::query()->orderBy('name')->pluck('name');
         $inventoryProducts = Product::query()
-            ->with('stockBatches')
+            ->select(['products.id', 'products.name'])
             ->where('stock', '>', 0)
-            ->orderBy('name')
-            ->get()
-            ->map(function (Product $product) {
-                $product->allocatable_inventory = (int) $product->stockBatches
-                    ->filter(fn ($batch) =>
-                        $batch->inventory_quantity > 0 &&
-                        (!$batch->expiry_date || !$batch->expiry_date->lt(today()))
-                    )
-                    ->sum('inventory_quantity');
-
-                return $product;
+            ->whereHas('stockBatches', function ($query) {
+                $query->where('inventory_quantity', '>', 0)
+                    ->where(function ($query) {
+                        $query->whereNull('expiry_date')
+                            ->orWhereDate('expiry_date', '>=', today());
+                    });
             })
-            ->filter(fn (Product $product) => $product->allocatable_inventory > 0)
-            ->values();
+            ->withSum([
+                'stockBatches as allocatable_inventory' => function ($query) {
+                    $query->where('inventory_quantity', '>', 0)
+                        ->where(function ($query) {
+                            $query->whereNull('expiry_date')
+                                ->orWhereDate('expiry_date', '>=', today());
+                        });
+                },
+            ], 'inventory_quantity')
+            ->orderBy('name')
+            ->get();
         $inventoryProductOptions = $inventoryProducts->map(fn (Product $product) => [
             'id' => $product->id,
             'name' => $product->name,
@@ -90,7 +94,7 @@ class ProductController extends Controller
         $batches = $expiredQuery
             ->orderBy('expiry_date')
             ->orderBy('product_id')
-            ->paginate(15);
+            ->paginate(10);
 
         return view('products.expired', compact('batches', 'totals'));
     }

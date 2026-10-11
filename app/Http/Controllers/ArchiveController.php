@@ -65,7 +65,7 @@ class ArchiveController extends Controller
                 'reports' => GeneratedReport::onlyTrashed()->orderByDesc('deleted_at'),
             };
 
-            $records = $query->paginate(15)->withQueryString();
+            $records = $query->paginate(10)->withQueryString();
         }
 
         return view('archive.index', [

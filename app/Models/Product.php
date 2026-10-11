@@ -58,7 +58,17 @@ class Product extends Model
 
     public function isExpired(): bool
     {
-        if ($this->exists && $this->stockBatches()->exists()) {
+        if ($this->exists && $this->relationLoaded('stockBatches')) {
+            $remainingBatches = $this->stockBatches->filter(fn (ProductStockBatch $batch) =>
+                $batch->inventory_quantity > 0 || $batch->available_quantity > 0
+            );
+
+            if ($remainingBatches->isNotEmpty()) {
+                return $remainingBatches->every(fn (ProductStockBatch $batch) =>
+                    $batch->expiry_date && $batch->expiry_date->lt(today())
+                );
+            }
+        } elseif ($this->exists && $this->stockBatches()->exists()) {
             $remainingBatches = $this->stockBatches()
                 ->where(function ($query) {
                     $query->where('inventory_quantity', '>', 0)

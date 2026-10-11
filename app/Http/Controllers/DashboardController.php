@@ -121,7 +121,7 @@ class DashboardController extends Controller
             $reportRows = (clone $salesQuery)
                 ->with('customer')
                 ->latest()
-                ->paginate(30)
+                ->paginate(10)
                 ->withQueryString();
             $reportTotals = [
                 'Completed transactions' => (int) $summary->transactions,
@@ -145,7 +145,7 @@ class DashboardController extends Controller
                 ->selectRaw('SUM(line_total) as total')
                 ->groupBy('item_name')
                 ->orderByDesc('quantity')
-                ->paginate(30)
+                ->paginate(10)
                 ->withQueryString();
 
             $summary = (clone $itemsQuery)
@@ -159,7 +159,7 @@ class DashboardController extends Controller
         } elseif ($selectedReport === 'inventory') {
             $reportRows = StockMovement::with(['product', 'user', 'sale'])
                 ->latest()
-                ->paginate(30)
+                ->paginate(10)
                 ->withQueryString();
 
             $summary = StockMovement::query()
